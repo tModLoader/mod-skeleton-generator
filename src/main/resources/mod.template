@@ -1,0 +1,11 @@
+using Terraria.ModLoader;
+
+namespace [MOD_NAME]
+{
+  class [MOD_NAME] : Mod
+  {
+    public [MOD_NAME]()
+    {
+    }
+  }
+}
