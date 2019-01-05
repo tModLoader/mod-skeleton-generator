@@ -21,9 +21,14 @@ for easier future use to generate new skeletons. The 'Reset cache' button will m
  
 [RxJava](https://github.com/ReactiveX/RxJava) (Reactive streams), 
 
+[RxKotlin](https://github.com/ReactiveX/RxKotlin) (Adds RxJava bindings for Kotlin),
+
 [Gradle](https://gradle.org/) (Dependency management), 
 
 [Spring Boot](https://spring.io/) (Micro Service framework for easy MVC flow)
+
+The app makes good use of the [TornadoFX](https://github.com/edvin/tornadofx) project. 
+It is a framework based off of the original [JavaFX](https://openjfx.io/) (but in this case for Kotlin) which is used to create GUIs in Java applications.
 
 # License
 The license for this application is the GNU GPLv3 license.
