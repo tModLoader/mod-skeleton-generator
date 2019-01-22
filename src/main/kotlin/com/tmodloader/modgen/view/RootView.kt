@@ -127,7 +127,7 @@ class RootView : View() {
                 directoryField.text,
                 gitIgnoreField.text
         )) {
-            statusLabel.text = controller.generateModSkeleton(this)
+            statusLabel.text = controller.generateModSkeleton(this).description
         }
     }
 }

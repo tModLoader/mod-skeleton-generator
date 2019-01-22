@@ -6,10 +6,30 @@ import org.springframework.stereotype.Service
 import java.io.File
 import java.nio.file.Files
 
+enum class ValidationStatus(
+        val description: String
+) {
+    PATH_BLANK("Output path may not be blank"),
+    PATH_NON_WRITABLE("Output path does not exist and is also not writeable"),
+    PATH_NON_READABLE("Output path is not readable"),
+    NAME_BLANK("Mod name may not be blank"),
+    NAME_HAS_SPECIAL_CHARS("Mod name may not contain special characters"),
+    DISPLAYNAME_BLANK("Mod display name may not be blank"),
+    VERSION_BLANK("Mod version may not be blank"),
+    VERSION_BAD_FORMAT("Mod version must follow MAJOR.MINOR.BUILD.REVISION format"),
+    VERSION_BAD_CHARS("Mod version must only consist of numbers"),
+    AUTHOR_BLANK("Mod author may not be blank"),
+    AUTHOR_TOO_LONG("Mod author length is too long. May not exceed 255 characters"),
+    LANGUAGE_BLANK("Language version may not be blank"),
+    LANGUAGE_BAD_FORMAT("Language version must be either 4 or 6"),
+    UNKNOWN("Unknown error occurred"),
+    SUCCESS("Mod skeleton generated!")
+}
+
 @Service
 class ValidatorService {
 
-    lateinit var validationError: String
+    lateinit var validationStatus: ValidationStatus
 
     fun validateGenerationModel(generationModel: GenerationModel): Boolean {
         if (!validateOutputPath(generationModel.outputPath)) return false
@@ -21,65 +41,64 @@ class ValidatorService {
         return true
     }
 
-    private fun validateOutputPath(path : String) : Boolean {
+    fun validateOutputPath(path: String): Boolean {
         if (path.isBlank()) {
-            validationError = "Output path may not be blank"
+            validationStatus = ValidationStatus.PATH_BLANK
             return false
         }
 
         var filePath = File(path)
-        if (!filePath.isDirectory) {
+        if (!filePath.isDirectory && !filePath.isAbsolute) {
             filePath = filePath.parentFile
         }
 
-        if (!filePath.exists()){
+        if (!filePath.exists()) {
             if (!Files.isWritable(filePath.toPath())) {
-                validationError = "Output path does not exist and is also not writeable"
+                validationStatus = ValidationStatus.PATH_NON_WRITABLE
                 return false
             }
-        }
-        else if (!Files.isReadable(filePath.toPath())) {
-            validationError = "Output path is nog readable"
+        } else if (!Files.isReadable(filePath.toPath())) {
+            validationStatus = ValidationStatus.PATH_NON_READABLE
             return false
         }
 
         return true
     }
 
-    private fun validateModName(name: String): Boolean {
+    fun validateModName(name: String): Boolean {
         if (name.isBlank()) {
-            validationError = "Mod name may not be blank"
+            validationStatus = ValidationStatus.NAME_BLANK
             return false
         }
         val regex = Regex("^[a-zA-Z]+\$", RegexOption.IGNORE_CASE)
         if (!regex.matches(name)) {
-            validationError = "Mod name may not contain special characters"
+            validationStatus = ValidationStatus.NAME_HAS_SPECIAL_CHARS
             return false
         }
         return true
     }
 
-    private fun validateModDisplayName(name: String): Boolean {
+    fun validateModDisplayName(name: String): Boolean {
         if (name.isBlank()) {
-            validationError = "Mod display name may not be blank"
+            validationStatus = ValidationStatus.DISPLAYNAME_BLANK
             return false
         }
         return true
     }
 
-    private fun validateModVersion(version: String): Boolean {
+    fun validateModVersion(version: String): Boolean {
         if (version.isBlank()) {
-            validationError = "Mod version may not be blank"
+            validationStatus = ValidationStatus.VERSION_BLANK
             return false
         }
-        val split = version.split('.', limit = 4)
+        val split = version.split('.')
         if (split.size > 4) {
-            validationError = "Mod version must follow MAJOR.MINOR.BUILD.REVISION format"
+            validationStatus = ValidationStatus.VERSION_BAD_FORMAT
             return false
         } else {
             split.forEach {
                 if (!StringUtils.isNumeric(it)) {
-                    validationError = "Mod version must only consist of numbers"
+                    validationStatus = ValidationStatus.VERSION_BAD_CHARS
                     return false
                 }
             }
@@ -87,26 +106,26 @@ class ValidatorService {
         return true
     }
 
-    private fun validateAuthor(author : String) : Boolean {
+    fun validateAuthor(author: String): Boolean {
         if (author.isBlank()) {
-            validationError = "Mod author may not be blank"
+            validationStatus = ValidationStatus.AUTHOR_BLANK
             return false
         }
         if (author.length > 255) {
-            validationError = "Mod author length is too long. May not exceed 255 characters"
+            validationStatus = ValidationStatus.AUTHOR_TOO_LONG
             return false
         }
         return true
     }
 
-    private fun validateLanguageVersion(languageVersion : String) : Boolean {
+    fun validateLanguageVersion(languageVersion: String): Boolean {
         if (languageVersion.isBlank()) {
-            validationError = "Language version may not be blank"
+            validationStatus = ValidationStatus.LANGUAGE_BLANK
             return false
         }
         if (!StringUtils.isNumeric(languageVersion) || languageVersion.length > 1
-            || languageVersion != "4" && languageVersion != "6") {
-            validationError = "Language version must be either 4 or 6"
+                || languageVersion != "4" && languageVersion != "6") {
+            validationStatus = ValidationStatus.LANGUAGE_BAD_FORMAT
             return false
         }
         return true

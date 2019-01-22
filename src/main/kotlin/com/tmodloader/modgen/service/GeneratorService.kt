@@ -11,7 +11,7 @@ import java.nio.file.Paths
 @Service
 class GeneratorService {
 
-    var generationException: String? = null
+    lateinit var generationException: ValidationStatus
 
     companion object {
 

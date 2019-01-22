@@ -3,6 +3,7 @@ package com.tmodloader.modgen.controller
 import com.tmodloader.modgen.model.AppPreference
 import com.tmodloader.modgen.model.GenerationModel
 import com.tmodloader.modgen.service.GeneratorService
+import com.tmodloader.modgen.service.ValidationStatus
 import com.tmodloader.modgen.service.ValidatorService
 import javafx.stage.DirectoryChooser
 import javafx.stage.Stage
@@ -20,15 +21,15 @@ class RootController : Controller() {
         }
     }
 
-    fun generateModSkeleton(generationModel: GenerationModel): String {
+    fun generateModSkeleton(generationModel: GenerationModel): ValidationStatus {
         if (!validatorService.validateGenerationModel(generationModel)) {
-            return validatorService.validationError
+            return validatorService.validationStatus
         }
 
         if (!generatorService.generateModSkeleton(generationModel)) {
-            return generatorService.generationException ?: "Unknown error occurred"
+            return generatorService.generationException
         }
 
-        return "Mod skeleton generated!"
+        return ValidationStatus.SUCCESS
     }
 }
