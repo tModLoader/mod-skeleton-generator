@@ -2,6 +2,8 @@
 The mod skeleton generator is an app made in Kotlin that can generate a mod skeleton 
 (for [tModLoader mods](https://tmodloader.net/)) in a given path.
 
+# PLEASE NOTE: The mod skeleton generator is now embedded in the client (versions 0.11 and up), which can be found in the mod sources menu. It is recommended to use this feature instead of this app.
+
 # Java is required
 Kotlin compiles to java bytecode. You will need [Java](https://www.java.com/en/download/) installed to run the application.
 
